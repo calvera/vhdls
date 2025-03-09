@@ -1,0 +1,4 @@
+*.vcd
+*.cf
+UVVM*.*
+lib/*

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>alarmclock</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.sigasi.hdt.verilog.ui.verilogNature</nature>
+		<nature>com.sigasi.hdt.vhdl.ui.vhdlNature</nature>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Common Libraries</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/IEEE</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/IEEE Synopsys</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/STD</name>
+			<type>2</type>
+			<locationURI>sigasiresource:/vhdl/2008/STD</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/UVVM</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_UVVM</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/altera</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_ALTERA</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/altera_lnsim</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_ALTERA_LNSIM</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/altera_mf</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_ALTERA_MF</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/altera_mf_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_ALTERA_MF_VER</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/altera_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_ALTERA_VER</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv_hssi</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV_HSSI</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv_hssi_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV_HSSI_VER</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv_pcie_hip</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV_PCIE_HIP</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv_pcie_hip_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV_PCIE_HIP_VER</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneiv_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIV_VER</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneive</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIVE</locationURI>
+		</link>
+		<link>
+			<name>Common Libraries/cycloneive_ver</name>
+			<type>2</type>
+			<locationURI>SIGASI_LIBRARY_CYCLONEIVE_VER</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

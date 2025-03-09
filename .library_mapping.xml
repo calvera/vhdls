@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.sigasi.hdt.shared.librarymapping.model:LibraryMappings xmlns:com.sigasi.hdt.shared.librarymapping.model="com.sigasi.hdt.vhdl.scoping.librarymapping" Version="2">
+  <Mappings Location="Common Libraries/altera" Library="altera"/>
+  <Mappings Location="Common Libraries/altera_lnsim" Library="altera_lnsim"/>
+  <Mappings Location="Common Libraries/altera_mf" Library="altera_mf"/>
+  <Mappings Location="Common Libraries/altera_mf_ver" Library="altera_mf_ver"/>
+  <Mappings Location="Common Libraries/altera_ver" Library="altera_ver"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_irqc" Library="bitvis_irqc"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_uart" Library="bitvis_uart"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_avalon_mm" Library="bitvis_vip_avalon_mm"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_avalon_st" Library="bitvis_vip_avalon_st"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_axi" Library="bitvis_vip_axi"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_axilite" Library="bitvis_vip_axilite"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_axistream" Library="bitvis_vip_axistream"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_clock_generator" Library="bitvis_vip_clock_generator"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_error_injection" Library="bitvis_vip_error_injection"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_ethernet" Library="bitvis_vip_ethernet"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_gmii" Library="bitvis_vip_gmii"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_gpio" Library="bitvis_vip_gpio"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_hvvc_to_vvc_bridge" Library="bitvis_vip_hvvc_to_vvc_bridge"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_i2c" Library="bitvis_vip_i2c"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_rgmii" Library="bitvis_vip_rgmii"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_sbi" Library="bitvis_vip_sbi"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_scoreboard" Library="bitvis_vip_scoreboard"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_spec_cov" Library="bitvis_vip_spec_cov"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_spi" Library="bitvis_vip_spi"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_uart" Library="bitvis_vip_uart"/>
+  <Mappings Location="Common Libraries/UVVM/bitvis_vip_wishbone" Library="bitvis_vip_wishbone"/>
+  <Mappings Location="Common Libraries/cycloneiv" Library="cycloneiv"/>
+  <Mappings Location="Common Libraries/cycloneiv_hssi" Library="cycloneiv_hssi"/>
+  <Mappings Location="Common Libraries/cycloneiv_hssi_ver" Library="cycloneiv_hssi_ver"/>
+  <Mappings Location="Common Libraries/cycloneiv_pcie_hip" Library="cycloneiv_pcie_hip"/>
+  <Mappings Location="Common Libraries/cycloneiv_pcie_hip_ver" Library="cycloneiv_pcie_hip_ver"/>
+  <Mappings Location="Common Libraries/cycloneiv_ver" Library="cycloneiv_ver"/>
+  <Mappings Location="Common Libraries/cycloneive" Library="cycloneive"/>
+  <Mappings Location="Common Libraries/cycloneive_ver" Library="cycloneive_ver"/>
+  <Mappings Location="Common Libraries/IEEE" Library="ieee"/>
+  <Mappings Location="Common Libraries/IEEE Synopsys" Library="ieee"/>
+  <Mappings Location="Common Libraries" Library="not mapped"/>
+  <Mappings Location="Common Libraries/STD" Library="std"/>
+  <Mappings Location="Common Libraries/UVVM/uvvm_util" Library="uvvm_util"/>
+  <Mappings Location="Common Libraries/UVVM/uvvm_vvc_framework" Library="uvvm_vvc_framework"/>
+  <Mappings Location="" Library="work"/>
+</com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>
