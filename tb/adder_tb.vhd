@@ -106,7 +106,7 @@ begin
         b   <= x"00000000";
         cin <= '0';
         wait for C_CLK_PERIOD;
-        check_value(q, x"00000000", error, "Test case 2: Sum check");
+        check_value(q, x"00000000", error, "Test case 1: Sum check");
         check_value(cout, '0', error, "Test case 1: Cout check");
 
         -- Test case 2: 1 + 1 + 0
@@ -146,7 +146,7 @@ begin
     end process p_main;
 
     -- DUT instantiation
-    DUT : entity work.adder
+    DUT : entity work.adder(behavioral_lookahead_carry)
         generic map(32)
         port map(
             a    => a,
