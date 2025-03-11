@@ -12,6 +12,33 @@ package logic_units_pkg is
             );
     end component unit_not;
 
+    component unit_zero is
+        generic(
+            width : integer range 2 to integer'high := 8
+        );
+        port(A : in  std_logic_vector(width - 1 downto 0);
+             Q : out std_logic
+            );
+    end component unit_zero;
+
+    component unit_sign is
+        generic(
+            width : integer range 2 to integer'high := 8
+        );
+        port(A : in  std_logic_vector(width - 1 downto 0);
+             Q : out std_logic
+            );
+    end component unit_sign;
+
+    component unit_parity is
+        generic(
+            width : integer range 2 to integer'high := 8
+        );
+        port(A : in  std_logic_vector(width - 1 downto 0);
+             Q : out std_logic
+            );
+    end component unit_parity;
+
     component unit_or is
         generic(
             width : integer range 2 to integer'high := 8
@@ -40,9 +67,6 @@ package logic_units_pkg is
     end component unit_and;
 
 end package logic_units_pkg;
-
-package body logic_units_pkg is
-end package body logic_units_pkg;
 
 ---------------------------
 library ieee;
@@ -175,3 +199,62 @@ begin
         gate : gate_xor port map(A => A(N), B => B(N), Q => Q(N));
     end generate;
 end architecture struct;
+
+---------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use work.logic_gates_pkg.all;
+
+entity unit_sign is
+    generic(
+        width : integer range 2 to integer'high := 8
+    );
+    port(A : in  std_logic_vector(width - 1 downto 0);
+         Q : out std_logic
+        );
+end entity unit_sign;
+
+architecture dataflow of unit_sign is
+begin
+    Q <= A(A'high);
+end architecture dataflow;
+
+---------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_misc.all;
+use work.logic_gates_pkg.all;
+
+entity unit_zero is
+    generic(
+        width : integer range 2 to integer'high := 8
+    );
+    port(A : in  std_logic_vector(width - 1 downto 0);
+         Q : out std_logic
+        );
+end entity unit_zero;
+
+architecture dataflow of unit_zero is
+begin
+    Q <= AND_REDUCE(A);
+end architecture dataflow;
+
+---------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_misc.all;
+use work.logic_gates_pkg.all;
+
+entity unit_parity is
+    generic(
+        width : integer range 2 to integer'high := 8
+    );
+    port(A : in  std_logic_vector(width - 1 downto 0);
+         Q : out std_logic
+        );
+end entity unit_parity;
+
+architecture dataflow of unit_zero is
+begin
+    Q <= XOR_REDUCE(A);
+end architecture dataflow;

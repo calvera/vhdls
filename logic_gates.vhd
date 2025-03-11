@@ -41,9 +41,6 @@ package logic_gates_pkg is
 
 end package logic_gates_pkg;
 
-package body logic_gates_pkg is
-end package body logic_gates_pkg;
-
 ---------------------------
 library ieee;
 use ieee.std_logic_1164.all;

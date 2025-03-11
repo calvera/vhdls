@@ -140,3 +140,33 @@ begin
     q    <= p xor c(WIDTH - 1 downto 0);
     cout <= c(WIDTH);
 end architecture;
+
+architecture dataflow_lookahead_carry of adder is
+    signal p, g : std_logic_vector(WIDTH - 1 downto 0); -- propagate, generate
+    signal c    : std_logic_vector(WIDTH downto 0); -- carry
+begin
+    -- Generate propagate and generate signals
+    g <= a and b;
+    p <= a xor b;
+
+    -- Generate carries
+    gen_carry : for i in 0 to WIDTH - 1 generate
+        first_bit : if i = 0 generate
+            c(i + 1) <= g(i) or (p(i) and cin);
+        end generate;
+
+        other_bits : if i > 0 generate
+            c(i + 1) <= g(i) or (p(i) and g(i - 1)) or (p(i) and p(i - 1) and c(i - 1));
+        end generate;
+    end generate;
+
+    -- First carry is carry in
+    c(0) <= cin;
+
+    -- Calculate sum
+    q <= p xor c(WIDTH - 1 downto 0);
+
+    -- Set carry out
+    cout <= c(WIDTH);
+
+end architecture dataflow_lookahead_carry;
