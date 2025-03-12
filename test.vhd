@@ -15,7 +15,19 @@ entity test is
 end entity test;
 
 architecture RTL of test is
+    signal counter : std_logic_vector(15 downto 0); -- čítač pro multiplexování
 begin
+    refresh : entity work.counting_clock
+        generic map(
+            divider       => 50_000_000,
+            counting_bits => 16
+        )
+        port map(
+            clk_in   => clk_in,
+            counting => counter,
+            reset    => '0'
+        );
+
     mux : segment7_mux
         generic map(
             segments_inverted    => true,
@@ -25,10 +37,10 @@ begin
             clk         => clk_in,
             reset       => '0',
             enable      => '1',
-            digit0      => x"0",
-            digit1      => x"1",
-            digit2      => x"2",
-            digit3      => x"3",
+            digit0      => counter(3 downto 0),
+            digit1      => counter(7 downto 4),
+            digit2      => counter(11 downto 8),
+            digit3      => counter(15 downto 12),
             segment_sel => DIG,
             segments    => SEG
         );

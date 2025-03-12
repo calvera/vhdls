@@ -13,6 +13,19 @@ package clock_pkg is
         );
     end component clock;
 
+    component counting_clock is
+        generic(
+            divider       : natural;
+            counting_bits : natural := 16
+        );
+        port(
+            clk_in   : in  std_logic;
+            reset    : in  std_logic;
+            clk_out  : out std_logic;
+            counting : out std_logic_vector(counting_bits - 1 downto 0)
+        );
+    end component counting_clock;
+
 end package clock_pkg;
 
 -------------------------------
@@ -32,14 +45,16 @@ entity clock is
     );
 end entity;
 architecture behavioral of clock is
-    constant c_ticks: integer := divider / 2 - 1;
-    constant c_BITS : integer := integer(ceil(log2(real(c_ticks))));
-    subtype counter_t is std_logic_vector(c_bits-1 downto 0);
-    constant ticks  : counter_t := std_logic_vector(to_unsigned(c_ticks, c_BITS));
+    constant C_TICKS : integer := divider / 2 - 1;
+    constant C_BITS  : integer := integer(ceil(log2(real(C_TICKS))));
+
+    subtype counter_t is std_logic_vector(C_BITS downto 0);
+    constant ticks : counter_t := std_logic_vector(to_unsigned(C_TICKS, C_BITS + 1));
+
     signal counter  : counter_t := ticks;
     signal temp_clk : std_logic := '0';
 begin
-    process(clk_in)
+    process(clk_in, reset)
     begin
         if reset = '1' then
             counter  <= ticks;
@@ -54,4 +69,54 @@ begin
     end process;
 
     clk_out <= temp_clk;
+end architecture;
+
+-------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.math_real.all;
+
+entity counting_clock is
+    generic(
+        divider       : natural;
+        counting_bits : natural := 16
+    );
+    port(
+        clk_in   : in  std_logic;
+        reset    : in  std_logic;
+        clk_out  : out std_logic;
+        counting : out std_logic_vector(counting_bits - 1 downto 0)
+    );
+end entity;
+
+architecture behavioral of counting_clock is
+    signal counter : unsigned(counting_bits - 1 downto 0) := (others => '0');
+    signal clk_internal: std_logic;
+begin
+    clk : entity work.clock
+        generic map(
+            divider => divider
+        )
+        port map(
+            clk_in  => clk_in,
+            reset   => reset,
+            clk_out => clk_internal
+        );
+
+    process(clk_internal, reset)
+    begin
+        if reset = '1' then
+            counter <= (others => '0');
+        elsif rising_edge(clk_internal) then
+            counter <= counter + 1;
+        end if;
+        clk_out <= clk_internal;
+    end process;
+
+    process(counter) is
+    begin
+        counting <= std_logic_vector(counter);
+    end process;
+
 end architecture;

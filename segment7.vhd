@@ -88,27 +88,29 @@ entity segment7_mux is
 end segment7_mux;
 
 architecture behavioral of segment7_mux is
-	signal counter       : unsigned(32 downto 0); -- čítač pro multiplexování
+	signal counter       : std_logic_vector(1 downto 0); -- čítač pro multiplexování
 	signal current_digit : STD_LOGIC_VECTOR(3 downto 0);
 begin
-	process(clk, reset)
-	begin
-		if reset = '1' then
-			counter <= (others => '0');
-		elsif rising_edge(clk) then
-			counter <= counter + 1;
-		end if;
-	end process;
+	x : entity work.counting_clock
+		generic map(
+			divider       => 50_000,
+			counting_bits => 2
+		)
+		port map(
+			clk_in   => clk,
+			counting => counter,
+			reset    => reset
+		);
 
 	-- Výběr aktivní číslice
-	process(counter(25 downto 24), digit0, digit1, digit2, digit3, enable)
+	process(counter, digit0, digit1, digit2, digit3, enable)
 	begin
 		if enable = '0' then
 			segment_sel   <= "0000";
 			current_digit <= (others => 'U');
 		else
 			if segment_sel_inverted then
-				case counter(25 downto 24) is
+				case counter is
 					when "00" =>
 						segment_sel   <= "1110";
 						current_digit <= digit0;
@@ -123,7 +125,7 @@ begin
 						current_digit <= digit3;
 				end case;
 			else
-				case counter(25 downto 24) is
+				case counter is
 					when "00" =>
 						segment_sel   <= "0001";
 						current_digit <= digit0;
