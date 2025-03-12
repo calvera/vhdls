@@ -19,13 +19,12 @@ architecture RTL of test is
 begin
     refresh : entity work.counting_clock
         generic map(
-            divider       => 50_000_000,
+            divider       => 10_000,
             counting_bits => 16
         )
         port map(
             clk_in   => clk_in,
-            counting => counter,
-            reset    => '0'
+            counting => counter
         );
 
     mux : segment7_mux
@@ -35,8 +34,6 @@ begin
         )
         port map(
             clk         => clk_in,
-            reset       => '0',
-            enable      => '1',
             digit0      => counter(3 downto 0),
             digit1      => counter(7 downto 4),
             digit2      => counter(11 downto 8),

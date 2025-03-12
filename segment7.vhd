@@ -12,8 +12,8 @@ package segment7_pkg is
 		);
 		port(
 			clk         : in  STD_LOGIC; -- hodinový signál
-			reset       : in  STD_LOGIC; -- reset
-			enable      : in  STD_LOGIC; -- vypnuto/zapnuto
+			reset       : in  STD_LOGIC := '0'; -- reset
+			enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 			digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
 			digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
 			digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
@@ -26,14 +26,14 @@ package segment7_pkg is
 	-- decoder of input numbers or character codes to display segments
 	function segment7_decoder(
 		I      : in std_logic_vector(3 downto 0);
-		invert : boolean)
-	return STD_LOGIC_VECTOR;
+		invert : boolean := false
+		) return STD_LOGIC_VECTOR;
 end package segment7_pkg;
 
 package body segment7_pkg is
 	function segment7_decoder(
 		I      : in std_logic_vector(3 downto 0);
-		invert : in boolean
+		invert : in boolean := false
 	) return STD_LOGIC_VECTOR is
 		type decoder_t is array (0 to 15) of STD_LOGIC_VECTOR(6 downto 0);
 		constant decoder : decoder_t := (
@@ -76,8 +76,8 @@ entity segment7_mux is
 	);
 	port(
 		clk         : in  STD_LOGIC;    -- hodinový signál
-		reset       : in  STD_LOGIC;    -- reset
-		enable      : in  STD_LOGIC;    -- vypnuto/zapnuto
+		reset       : in  STD_LOGIC := '0';    -- reset
+		enable      : in  STD_LOGIC := '1';    -- vypnuto/zapnuto
 		digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
 		digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
 		digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
@@ -91,9 +91,9 @@ architecture behavioral of segment7_mux is
 	signal counter       : std_logic_vector(1 downto 0); -- čítač pro multiplexování
 	signal current_digit : STD_LOGIC_VECTOR(3 downto 0);
 begin
-	x : entity work.counting_clock
+	refresh : entity work.counting_clock
 		generic map(
-			divider       => 50_000,
+			divider       => 10,
 			counting_bits => 2
 		)
 		port map(
