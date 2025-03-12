@@ -32,8 +32,10 @@ entity clock is
     );
 end entity;
 architecture behavioral of clock is
-    subtype counter_t is STD_LOGIC_VECTOR(integer(ceil(log2(real(divider / 2 - 1)))) downto 0);
-    constant ticks  : counter_t := std_logic_vector(divider / 2 - 1);
+    constant c_ticks: integer := divider / 2 - 1;
+    constant c_BITS : integer := integer(ceil(log2(real(c_ticks))));
+    subtype counter_t is std_logic_vector(c_bits-1 downto 0);
+    constant ticks  : counter_t := std_logic_vector(to_unsigned(c_ticks, c_BITS));
     signal counter  : counter_t := ticks;
     signal temp_clk : std_logic := '0';
 begin

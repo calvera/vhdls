@@ -254,7 +254,7 @@ entity unit_parity is
         );
 end entity unit_parity;
 
-architecture dataflow of unit_zero is
+architecture dataflow of unit_parity is
 begin
     Q <= XOR_REDUCE(A);
 end architecture dataflow;
