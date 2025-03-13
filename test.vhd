@@ -10,12 +10,13 @@ entity test is
         -- multiplexing digits
         DIG    : out std_logic_vector(3 downto 0);
         -- control segments of the current digit (7 = decimal point)
-        SEG    : out std_logic_vector(6 downto 0)
+        SEG    : out std_logic_vector(7 downto 0)
     );
 end entity test;
 
 architecture RTL of test is
     signal counter : std_logic_vector(15 downto 0); -- čítač pro multiplexování
+    signal blink : std_logic;
 begin
     refresh : entity work.counting_clock
         generic map(
@@ -24,7 +25,8 @@ begin
         )
         port map(
             clk_in   => clk_in,
-            counting => counter
+            counting => counter,
+            clk_out => blink
         );
 
     mux : segment7_mux
@@ -38,6 +40,7 @@ begin
             digit1      => counter(7 downto 4),
             digit2      => counter(11 downto 8),
             digit3      => counter(15 downto 12),
+            dec_point2  => blink,
             segment_sel => DIG,
             segments    => SEG
         );

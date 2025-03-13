@@ -18,22 +18,28 @@ package segment7_pkg is
 			digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
 			digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
 			digit3      : in  STD_LOGIC_VECTOR(3 downto 0); -- čtvrtá číslice
-			segments    : out STD_LOGIC_VECTOR(6 downto 0); -- výstup pro segmenty (a-g)
+			dec_point0  : in  STD_LOGIC := '0';
+			dec_point1  : in  STD_LOGIC := '0';
+			dec_point2  : in  STD_LOGIC := '0';
+			dec_point3  : in  STD_LOGIC := '0';
+			segments    : out STD_LOGIC_VECTOR(7 downto 0); -- výstup pro segmenty (a-g)
 			segment_sel : out STD_LOGIC_VECTOR(3 downto 0) -- výběr aktivní číslice
 		);
 	end component segment7_mux;
 
 	-- decoder of input numbers or character codes to display segments
 	function segment7_decoder(
-		I      : in std_logic_vector(3 downto 0);
-		invert : boolean := false
-		) return STD_LOGIC_VECTOR;
+		number    : in std_logic_vector(3 downto 0);
+		dec_point : in std_logic := '0';
+		invert    : boolean      := false
+	) return STD_LOGIC_VECTOR;
 end package segment7_pkg;
 
 package body segment7_pkg is
 	function segment7_decoder(
-		I      : in std_logic_vector(3 downto 0);
-		invert : in boolean := false
+		number    : in std_logic_vector(3 downto 0);
+		dec_point : in std_logic := '0';
+		invert    : in boolean   := false
 	) return STD_LOGIC_VECTOR is
 		type decoder_t is array (0 to 15) of STD_LOGIC_VECTOR(6 downto 0);
 		constant decoder : decoder_t := (
@@ -54,11 +60,14 @@ package body segment7_pkg is
 			"1111001",                  -- 14 = E
 			"1110001"                   -- 15 = F
 		);
+		variable result : std_logic_vector(7 downto 0);
+
 	begin
+		result := dec_point & decoder(to_integer(unsigned(number)));
 		if invert then
-			return NOT decoder(to_integer(unsigned(I)));
+			return NOT result;
 		end if;
-		return decoder(to_integer(unsigned(I)));
+		return result;
 	end function segment7_decoder;
 
 end package body segment7_pkg;
@@ -76,20 +85,25 @@ entity segment7_mux is
 	);
 	port(
 		clk         : in  STD_LOGIC;    -- hodinový signál
-		reset       : in  STD_LOGIC := '0';    -- reset
-		enable      : in  STD_LOGIC := '1';    -- vypnuto/zapnuto
+		reset       : in  STD_LOGIC := '0'; -- reset
+		enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 		digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
 		digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
 		digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
 		digit3      : in  STD_LOGIC_VECTOR(3 downto 0); -- čtvrtá číslice
-		segments    : out STD_LOGIC_VECTOR(6 downto 0); -- výstup pro segmenty (a-g)
+		dec_point0  : in  STD_LOGIC := '0';
+		dec_point1  : in  STD_LOGIC := '0';
+		dec_point2  : in  STD_LOGIC := '0';
+		dec_point3  : in  STD_LOGIC := '0';
+		segments    : out STD_LOGIC_VECTOR(7 downto 0); -- výstup pro segmenty (a-g)
 		segment_sel : out STD_LOGIC_VECTOR(3 downto 0) -- výběr aktivní číslice
 	);
 end segment7_mux;
 
 architecture behavioral of segment7_mux is
-	signal counter       : std_logic_vector(1 downto 0); -- čítač pro multiplexování
-	signal current_digit : STD_LOGIC_VECTOR(3 downto 0);
+	signal counter           : std_logic_vector(1 downto 0); -- čítač pro multiplexování
+	signal current_digit     : STD_LOGIC_VECTOR(3 downto 0);
+	signal current_dec_point : STD_LOGIC;
 begin
 	refresh : entity work.counting_clock
 		generic map(
@@ -103,49 +117,55 @@ begin
 		);
 
 	-- Výběr aktivní číslice
-	process(counter, digit0, digit1, digit2, digit3, enable)
+	process(counter, digit0, digit1, digit2, digit3, enable, dec_point0, dec_point1, dec_point2, dec_point3)
 	begin
 		if enable = '0' then
 			segment_sel   <= "0000";
 			current_digit <= (others => 'U');
 		else
+			case counter is
+				when "00" =>
+					current_digit     <= digit0;
+					current_dec_point <= dec_point0;
+				when "01" =>
+					current_digit     <= digit1;
+					current_dec_point <= dec_point1;
+				when "10" =>
+					current_digit     <= digit2;
+					current_dec_point <= dec_point2;
+				when others =>
+					current_digit     <= digit3;
+					current_dec_point <= dec_point3;
+			end case;
 			if segment_sel_inverted then
 				case counter is
 					when "00" =>
-						segment_sel   <= "1110";
-						current_digit <= digit0;
+						segment_sel <= "1110";
 					when "01" =>
-						segment_sel   <= "1101";
-						current_digit <= digit1;
+						segment_sel <= "1101";
 					when "10" =>
-						segment_sel   <= "1011";
-						current_digit <= digit2;
+						segment_sel <= "1011";
 					when others =>
-						segment_sel   <= "0111";
-						current_digit <= digit3;
+						segment_sel <= "0111";
 				end case;
 			else
 				case counter is
 					when "00" =>
-						segment_sel   <= "0001";
-						current_digit <= digit0;
+						segment_sel <= "0001";
 					when "01" =>
-						segment_sel   <= "0010";
-						current_digit <= digit1;
+						segment_sel <= "0010";
 					when "10" =>
-						segment_sel   <= "0100";
-						current_digit <= digit2;
+						segment_sel <= "0100";
 					when others =>
-						segment_sel   <= "1000";
-						current_digit <= digit3;
+						segment_sel <= "1000";
 				end case;
 			end if;
 		end if;
 	end process;
 
-	process(current_digit)
+	process(current_digit, current_dec_point)
 	begin
-		segments <= segment7_decoder(current_digit, segments_inverted);
+		segments <= segment7_decoder(current_digit, current_dec_point, segments_inverted);
 	end process;
 
 end behavioral;
