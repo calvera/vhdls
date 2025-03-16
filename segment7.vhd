@@ -15,9 +15,13 @@ package segment7_pkg is
 			reset       : in  STD_LOGIC := '0'; -- reset
 			enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 			digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
+			digit0en    : in  STD_LOGIC := '1';
 			digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
+			digit1en    : in  STD_LOGIC := '1';
 			digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
+			digit2en    : in  STD_LOGIC := '1';
 			digit3      : in  STD_LOGIC_VECTOR(3 downto 0); -- čtvrtá číslice
+			digit3en    : in  STD_LOGIC := '1';
 			dec_point0  : in  STD_LOGIC := '0';
 			dec_point1  : in  STD_LOGIC := '0';
 			dec_point2  : in  STD_LOGIC := '0';
@@ -29,6 +33,7 @@ package segment7_pkg is
 
 	-- decoder of input numbers or character codes to display segments
 	function segment7_decoder(
+		enable    : in std_logic;
 		number    : in std_logic_vector(3 downto 0);
 		dec_point : in std_logic := '0';
 		invert    : boolean      := false
@@ -37,6 +42,7 @@ end package segment7_pkg;
 
 package body segment7_pkg is
 	function segment7_decoder(
+		enable    : in std_logic;
 		number    : in std_logic_vector(3 downto 0);
 		dec_point : in std_logic := '0';
 		invert    : in boolean   := false
@@ -63,7 +69,11 @@ package body segment7_pkg is
 		variable result : std_logic_vector(7 downto 0);
 
 	begin
-		result := dec_point & decoder(to_integer(unsigned(number)));
+		if enable = '0' then
+			result := (others => '0');
+		else
+			result := dec_point & decoder(to_integer(unsigned(number)));
+		end if;
 		if invert then
 			return NOT result;
 		end if;
@@ -88,9 +98,13 @@ entity segment7_mux is
 		reset       : in  STD_LOGIC := '0'; -- reset
 		enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 		digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
+		digit0en    : in  STD_LOGIC := '1';
 		digit1      : in  STD_LOGIC_VECTOR(3 downto 0); -- druhá číslice
+		digit1en    : in  STD_LOGIC := '1';
 		digit2      : in  STD_LOGIC_VECTOR(3 downto 0); -- třetí číslice
+		digit2en    : in  STD_LOGIC := '1';
 		digit3      : in  STD_LOGIC_VECTOR(3 downto 0); -- čtvrtá číslice
+		digit3en    : in  STD_LOGIC := '1';
 		dec_point0  : in  STD_LOGIC := '0';
 		dec_point1  : in  STD_LOGIC := '0';
 		dec_point2  : in  STD_LOGIC := '0';
@@ -104,10 +118,11 @@ architecture behavioral of segment7_mux is
 	signal counter           : std_logic_vector(1 downto 0); -- čítač pro multiplexování
 	signal current_digit     : STD_LOGIC_VECTOR(3 downto 0);
 	signal current_dec_point : STD_LOGIC;
+	signal current_enable    : STD_LOGIC;
 begin
 	refresh : entity work.counting_clock
 		generic map(
-			divider       => 10,
+			divider       => 50,
 			counting_bits => 2
 		)
 		port map(
@@ -117,25 +132,35 @@ begin
 		);
 
 	-- Výběr aktivní číslice
-	process(counter, digit0, digit1, digit2, digit3, enable, dec_point0, dec_point1, dec_point2, dec_point3)
+	process(counter, digit0, digit1, digit2, digit3, enable, dec_point0, dec_point1, dec_point2, dec_point3, digit0en, digit1en, digit2en, digit3en)
 	begin
 		if enable = '0' then
-			segment_sel   <= "0000";
-			current_digit <= (others => 'U');
+			if segment_sel_inverted then
+				segment_sel <= "1111";
+			else
+				segment_sel <= "0000";
+			end if;
+			current_digit     <= (others => 'U');
+			current_dec_point <= '0';
+			current_enable    <= '0';
 		else
 			case counter is
 				when "00" =>
 					current_digit     <= digit0;
 					current_dec_point <= dec_point0;
+					current_enable    <= digit0en;
 				when "01" =>
 					current_digit     <= digit1;
 					current_dec_point <= dec_point1;
+					current_enable    <= digit1en;
 				when "10" =>
 					current_digit     <= digit2;
 					current_dec_point <= dec_point2;
+					current_enable    <= digit2en;
 				when others =>
 					current_digit     <= digit3;
 					current_dec_point <= dec_point3;
+					current_enable    <= digit3en;
 			end case;
 			if segment_sel_inverted then
 				case counter is
@@ -163,9 +188,9 @@ begin
 		end if;
 	end process;
 
-	process(current_digit, current_dec_point)
+	process(current_digit, current_dec_point, current_enable)
 	begin
-		segments <= segment7_decoder(current_digit, current_dec_point, segments_inverted);
+		segments <= segment7_decoder(current_enable, current_digit, current_dec_point, segments_inverted);
 	end process;
 
 end behavioral;
