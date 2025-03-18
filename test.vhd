@@ -17,31 +17,51 @@ entity test is
 end entity test;
 
 architecture RTL of test is
-    signal sec_low   : std_logic_vector(3 downto 0) := (others => '0');
-    signal sec_high  : std_logic_vector(3 downto 0) := (others => '0');
-    signal min_low   : std_logic_vector(3 downto 0) := (others => '0');
-    signal min_high  : std_logic_vector(3 downto 0) := (others => '0');
-    signal hour_low  : std_logic_vector(3 downto 0) := (others => '0');
-    signal hour_high : std_logic_vector(3 downto 0) := (others => '0');
-    signal dig0      : std_logic_vector(3 downto 0) := (others => '0');
-    signal dig1      : std_logic_vector(3 downto 0) := (others => '0');
-    signal dig2      : std_logic_vector(3 downto 0) := (others => '0');
-    signal dig3      : std_logic_vector(3 downto 0) := (others => '0');
-    signal dig2_en   : std_logic := '1';
-    signal dig3_en   : std_logic := '1';
-    signal seconds   : std_logic;
-    signal seconds10 : std_logic;
-    signal minutes   : std_logic;
-    signal minutes10 : std_logic;
-    signal hour      : std_logic;
-    signal hour10    : std_logic;
-    signal r         : std_logic;
-    signal ss        : std_logic;
+    signal sec_low    : std_logic_vector(3 downto 0) := (others => '0');
+    signal sec_high   : std_logic_vector(3 downto 0) := (others => '0');
+    signal min_low    : std_logic_vector(3 downto 0) := (others => '0');
+    signal min_high   : std_logic_vector(3 downto 0) := (others => '0');
+    signal hour_low   : std_logic_vector(3 downto 0) := (others => '0');
+    signal hour_high  : std_logic_vector(3 downto 0) := (others => '0');
+    signal dig0       : std_logic_vector(3 downto 0) := (others => '0');
+    signal dig1       : std_logic_vector(3 downto 0) := (others => '0');
+    signal dig2       : std_logic_vector(3 downto 0) := (others => '0');
+    signal dig3       : std_logic_vector(3 downto 0) := (others => '0');
+    signal dig2_en    : std_logic                    := '1';
+    signal dig3_en    : std_logic                    := '1';
+    signal seconds    : std_logic;
+    signal seconds10  : std_logic;
+    signal minutes    : std_logic;
+    signal minutes10  : std_logic;
+    signal hour       : std_logic;
+    signal hour10     : std_logic;
+    signal r          : std_logic;
+    signal reset_sync : std_logic;
+    signal ss         : std_logic;
+    signal counter    : std_logic_vector(1 downto 0) := (others => '0');
 begin
-    r  <= not reset;
+    process(clk_in)
+    begin
+        if rising_edge(clk_in) then
+            reset_sync <= reset;
+        end if;
+    end process;
+
+    r  <= not reset_sync;
     ss <= not show_seconds;
 
-    refresh : entity work.clock
+    refresh : entity work.counting_clock
+        generic map(
+            divider       => 50,
+            counting_bits => 2
+        )
+        port map(
+            clk_in   => clk_in,
+            counting => counter,
+            reset    => r
+        );
+
+    secs : entity work.clock
         generic map(
             divider => 10_000
         )
@@ -131,13 +151,13 @@ begin
             dig1    <= min_high;
             dig2    <= hour_low;
             dig3    <= hour_high;
-				dig2_en <= '1';
+            dig2_en <= '1';
             dig3_en <= hour_high(1) or hour_high(0);
         else
-            dig0 <= sec_low;
-            dig1 <= sec_high;
-            dig2 <= min_low;
-            dig3 <= hour_low;
+            dig0    <= sec_low;
+            dig1    <= sec_high;
+            dig2    <= min_low;
+            dig3    <= hour_low;
             dig2_en <= '0';
             dig3_en <= '0';
         end if;
@@ -149,7 +169,7 @@ begin
             segment_sel_inverted => true
         )
         port map(
-            clk         => clk_in,
+            counter     => counter,
             digit0      => dig0,
             digit1      => dig1,
             digit2      => dig2,

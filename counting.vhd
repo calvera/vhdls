@@ -44,25 +44,46 @@ architecture behavioral of counting is
     constant C_OVERFLOW  : std_logic_vector(counting_bits - 1 downto 0) := std_logic_vector(to_unsigned(overflow, counting_bits));
     constant C_OVERFLOW2 : std_logic_vector(counting_bits - 1 downto 0) := std_logic_vector(to_unsigned(overflow2, counting_bits));
     signal counter       : std_logic_vector(counting_bits - 1 downto 0) := (others => '0');
+    signal clk_out_int   : std_logic                                    := '0';
 begin
-    process(clk_in, reset)
-    begin
-        if reset = '1' then
-            counter <= (others => '0');
-            clk_out <= '0';
-        elsif rising_edge(clk_in) then
-            if overflow2_enabled = '1' and counter = C_OVERFLOW2 then
-                counter <= (others => '0');
-                clk_out <= '1';
-            elsif counter = C_OVERFLOW then
-                clk_out <= '1';
-                counter <= (others => '0');
-            else
-                clk_out <= '0';
-                counter <= std_logic_vector(unsigned(counter) + 1);
+    ov2 : if overflow2 > 0 generate
+        process(clk_in, reset)
+        begin
+            if reset = '1' then
+                counter     <= (others => '0');
+                clk_out_int <= '0';
+            elsif rising_edge(clk_in) then
+                if overflow2_enabled = '1' and counter = C_OVERFLOW2 then
+                    counter     <= (others => '0');
+                    clk_out_int <= '1';
+                elsif counter = C_OVERFLOW then
+                    clk_out_int <= '1';
+                    counter     <= (others => '0');
+                else
+                    clk_out_int <= '0';
+                    counter     <= std_logic_vector(unsigned(counter) + 1);
+                end if;
             end if;
-        end if;
-    end process;
+        end process;
+    else generate
+        process(clk_in, reset)
+        begin
+            if reset = '1' then
+                counter     <= (others => '0');
+                clk_out_int <= '0';
+            elsif rising_edge(clk_in) then
+                if counter = C_OVERFLOW then
+                    clk_out_int <= '1';
+                    counter     <= (others => '0');
+                else
+                    clk_out_int <= '0';
+                    counter     <= std_logic_vector(unsigned(counter) + 1);
+                end if;
+            end if;
+        end process;
+    end generate;
+
+    clk_out <= clk_out_int;
 
     process(counter) is
     begin

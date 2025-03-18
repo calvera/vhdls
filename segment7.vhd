@@ -11,8 +11,7 @@ package segment7_pkg is
 			segment_sel_inverted : boolean := true
 		);
 		port(
-			clk         : in  STD_LOGIC; -- hodinový signál
-			reset       : in  STD_LOGIC := '0'; -- reset
+			counter     : in  std_logic_vector(1 downto 0); -- čítač pro multiplexování
 			enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 			digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
 			digit0en    : in  STD_LOGIC := '1';
@@ -36,7 +35,7 @@ package segment7_pkg is
 		enable    : in std_logic;
 		number    : in std_logic_vector(3 downto 0);
 		dec_point : in std_logic := '0';
-		invert    : boolean      := false
+		invert    : in boolean   := false
 	) return STD_LOGIC_VECTOR;
 end package segment7_pkg;
 
@@ -94,8 +93,7 @@ entity segment7_mux is
 		segment_sel_inverted : boolean := true
 	);
 	port(
-		clk         : in  STD_LOGIC;    -- hodinový signál
-		reset       : in  STD_LOGIC := '0'; -- reset
+		counter     : in  std_logic_vector(1 downto 0); -- čítač pro multiplexování
 		enable      : in  STD_LOGIC := '1'; -- vypnuto/zapnuto
 		digit0      : in  STD_LOGIC_VECTOR(3 downto 0); -- první číslice (0-F)
 		digit0en    : in  STD_LOGIC := '1';
@@ -115,21 +113,10 @@ entity segment7_mux is
 end segment7_mux;
 
 architecture behavioral of segment7_mux is
-	signal counter           : std_logic_vector(1 downto 0); -- čítač pro multiplexování
 	signal current_digit     : STD_LOGIC_VECTOR(3 downto 0);
 	signal current_dec_point : STD_LOGIC;
 	signal current_enable    : STD_LOGIC;
 begin
-	refresh : entity work.counting_clock
-		generic map(
-			divider       => 50,
-			counting_bits => 2
-		)
-		port map(
-			clk_in   => clk,
-			counting => counter,
-			reset    => reset
-		);
 
 	-- Výběr aktivní číslice
 	process(counter, digit0, digit1, digit2, digit3, enable, dec_point0, dec_point1, dec_point2, dec_point3, digit0en, digit1en, digit2en, digit3en)
