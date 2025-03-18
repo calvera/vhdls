@@ -38,11 +38,19 @@ architecture RTL of test is
     signal r          : std_logic;
     signal reset_sync : std_logic;
     signal ss         : std_logic;
+    signal pll_clk    : std_logic;
     signal counter    : std_logic_vector(1 downto 0) := (others => '0');
 begin
-    process(clk_in)
+    pll_inst : entity work.pll          -- 50 MHz to 10kHz 
+        PORT MAP(
+            areset => '0',
+            inclk0 => clk_in,
+            c0     => pll_clk
+        );
+
+    process(pll_clk)
     begin
-        if rising_edge(clk_in) then
+        if rising_edge(pll_clk) then
             reset_sync <= reset;
         end if;
     end process;
@@ -52,21 +60,21 @@ begin
 
     refresh : entity work.counting_clock
         generic map(
-            divider       => 50,
+            divider       => 50,        -- 200Hz
             counting_bits => 2
         )
         port map(
-            clk_in   => clk_in,
+            clk_in   => pll_clk,
             counting => counter,
             reset    => r
         );
 
     secs : entity work.clock
         generic map(
-            divider => 10_000
+            divider => 10_000           -- 1Hz
         )
         port map(
-            clk_in  => clk_in,
+            clk_in  => pll_clk,
             reset   => r,
             clk_out => seconds
         );
@@ -135,13 +143,13 @@ begin
 
     hh : entity work.counting
         generic map(
-            counting_bits => 4,
-            overflow      => 5
+            counting_bits => 3,
+            overflow      => 2
         )
         port map(
             clk_in   => hour10,
             reset    => r,
-            counting => hour_high
+            counting => hour_high(2 downto 0)
         );
 
     process(ss, hour_high, hour_low, min_high, min_low, sec_high, sec_low)

@@ -72,40 +72,6 @@ begin
     clk_out <= temp_clk;
 end architecture;
 
-architecture pll of clock is
-    constant C_TICKS : integer := divider / 2 - 1;
-    constant C_BITS  : integer := integer(ceil(log2(real(C_TICKS))));
-
-    subtype counter_t is std_logic_vector(C_BITS downto 0);
-    constant ticks : counter_t := std_logic_vector(to_unsigned(C_TICKS, C_BITS + 1));
-
-    signal counter  : counter_t := ticks;
-    signal internal_clk : std_logic := '0';
-    signal temp_clk : std_logic := '0';
-begin
-    pll_inst : entity work.pll PORT MAP (
-		areset	 => '0',
-		inclk0	 => clk_in,
-		c0	 => internal_clk
-	);
-
-    process(internal_clk, reset)
-    begin
-        if reset = '1' then
-            counter  <= ticks;
-            temp_clk <= '0';
-        elsif (rising_edge(internal_clk)) then
-            counter <= counter_t(unsigned(counter) - 1);
-            if counter(counter'high) = '1' then
-                temp_clk <= NOT temp_clk;
-                counter  <= ticks;
-            end if;
-        end if;
-    end process;
-
-    clk_out <= temp_clk;
-end architecture;
-
 -------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -126,10 +92,10 @@ entity counting_clock is
 end entity;
 
 architecture behavioral of counting_clock is
-    signal counter : unsigned(counting_bits - 1 downto 0) := (others => '0');
-    signal clk_internal: std_logic;
+    signal counter      : unsigned(counting_bits - 1 downto 0) := (others => '0');
+    signal clk_internal : std_logic;
 begin
-    clk : entity work.clock(pll)
+    clk : entity work.clock
         generic map(
             divider => divider
         )
